@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="section-header">
-          <h2>Statistik</h2>
+          <h2>Statistikdd</h2>
           <p>Berikut adalah indeks kepuasan masyarakat yang didapatkan dari hasil survei <b> Periode {{$periode}}</b> <br><br> <br> <button onclick="$('.periode').modal('show');" class="btn btn-primary btn-sm"> <i class="fa fa-edit" aria-hidden="true"></i> Ganti Periode</button> </p>
 
         </div>
