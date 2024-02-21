@@ -29,7 +29,7 @@ class DashboardController extends Controller
   }
 
   function dashboard(Request $request, \App\IkmManager $ikm){
-    $data = json_decode(json_encode($ikm->ikm_kabupaten()));
+    $data = json_decode(json_encode($ikm->ikm_kabupaten($request->year??date('Y'))));
     $per = $request->all() ?? null;
 return view('admin.dashboard',compact('data','per'));
   }
@@ -48,13 +48,19 @@ return view('admin.dashboard',compact('data','per'));
       }
 
       if($request->act=='edit'){
+
       $edit = $skpd->where('id_skpd',dec64($request->id));
       if(empty($edit->first()))
       return redirect('admin/data-skpd')->with('danger','Data Tidak Ditemukan');
 
       if($request->simpan){
         $edit->update(['nama_skpd'=>$request->nama_skpd,'status_sample'=>$request->status_sample,'alamat'=>$request->alamat]);
-        return redirect('admin/data-skpd')->with('success','Berhasil diedit');
+        \App\Models\Periode::whereSkpdId(dec64($request->id))->delete();
+        foreach($request->tahun_sample as $r){
+        \App\Models\Periode::updateOrCreate(['skpd_id' => dec64($request->id),'tahun'=>$r], ['tahun'=>$r]);
+        }
+
+        return back()->with('success','Berhasil diedit');
        }
       $edit = $edit->first();
      }
@@ -68,7 +74,7 @@ return view('admin.dashboard',compact('data','per'));
       }
     }
     return view('admin.data_skpd',['edit'=>$edit,'per'=>$per]);
-    
+
       }
 
 
@@ -87,7 +93,7 @@ return view('admin.dashboard',compact('data','per'));
           $resp = $resp->whereMonth('created',request('bulan'));
         }
       }
-      
+
       if(request('cetak')){
         $pdf = PDF::loadview('admin.hasilsurvei.hasil_skm',['resp'=>$resp->get(),'layanan'=>$l,'id'=>$id]);
         return $pdf->download(Str::slug($l->nama_layanan).'.pdf');

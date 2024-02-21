@@ -9,8 +9,8 @@ class Periode extends Model
 
 
     public $timestamps = false;
-    
-    
+    protected $fillable = ['tahun', 'skpd_id'];
 
-  
+
+
 }

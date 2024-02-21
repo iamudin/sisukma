@@ -54,7 +54,7 @@ class IkmManager
         $to_date = request()->year."-12-23";
         $between = [$from,date("Y-m-t", strtotime($to_date))];
         $respon = Respon::join('layanan', 'layanan.id_layanan', 'respon.id_layanan')->join('skpd', 'skpd.id_skpd', 'layanan.id_skpd')->where('skpd.id_skpd', $id_skpd)->whereBetween('respon.tgl_survei', $between)->get();
-    
+
         $totalmonth = diffmonth(new \DateTime($from), new \DateTime($to_date));
             $star = intval(substr("01", 0, 1) == '0' ? substr("01", 1, 2) : "01");
             $to = intval(substr("12", 0, 1) == '0' ? substr("12", 1, 2) : "12");
@@ -85,20 +85,20 @@ class IkmManager
             if(request()->sms){
                 View::share('periode',(Str::lower(request('sms')) == "i" ? "Januari s/d Juni" : "Juli s/d Desember " )." ".request('year'));
                 View::share('urlcetak',url($path.'?year='.request()->year.'&from='.request()->from.'&to='.request()->to.'&sms='.request()->sms));
-        
+
                     // dd($q);
                 }
             else{
                 View::share('periode','Triwulan '.$this->astrw(request()->from,request()->to).' '.request()->year);
                 View::share('urlcetak',url($path.'?year='.request()->year.'&from='.request()->from.'&to='.request()->to));
-        
+
         }
-        
+
         $from = date('Y-m-d',strtotime(request()->year.'-'.request()->from.'-01'));
         $to_date = request()->year."-".request()->to."-23";
         $between = [$from,date("Y-m-t", strtotime($to_date))];
                 $respon = Respon::join('layanan', 'layanan.id_layanan', 'respon.id_layanan')->join('skpd', 'skpd.id_skpd', 'layanan.id_skpd')->where('skpd.id_skpd', $id_skpd)->whereBetween('respon.tgl_survei', $between)->get();
-    
+
         $totalmonth = diffmonth(new \DateTime($from), new \DateTime($to_date));
             $star = intval(substr(request('from'), 0, 1) == '0' ? substr(request('from'), 1, 2) : request('from'));
             $to = intval(substr(request('to'), 0, 1) == '0' ? substr(request('to'), 1, 2) : request('to'));
@@ -110,7 +110,7 @@ class IkmManager
             array_push($data, $rd);
           }
           // $o[] = numtomonth($a);
-    
+
           // $f[$a] = getIkmPd($u);?
               // return $rsp;
         }
@@ -120,7 +120,7 @@ class IkmManager
         $to_date = request()->year."-12-23";
         $between = [$from,date("Y-m-t", strtotime($to_date))];
                 $respon = Respon::join('layanan', 'layanan.id_layanan', 'respon.id_layanan')->join('skpd', 'skpd.id_skpd', 'layanan.id_skpd')->where('skpd.id_skpd', $id_skpd)->whereBetween('respon.tgl_survei', $between)->get();
-    
+
         $totalmonth = diffmonth(new \DateTime($from), new \DateTime($to_date));
 
         $data = array();
@@ -131,13 +131,13 @@ class IkmManager
             array_push($data, $rd);
           }
           // $o[] = numtomonth($a);
-    
+
           // $f[$a] = getIkmPd($u);?
               // return $rsp;
         }
                 $q = collect($data);
         }
-        
+
     }
     else{
         View::share('periode',date('Y'));
@@ -146,7 +146,7 @@ class IkmManager
         $to_date = date('Y')."-12-23";
         $between = [$from,date("Y-m-t", strtotime($to_date))];
                 $respon = Respon::join('layanan', 'layanan.id_layanan', 'respon.id_layanan')->join('skpd', 'skpd.id_skpd', 'layanan.id_skpd')->where('skpd.id_skpd', $id_skpd)->whereBetween('respon.tgl_survei', $between)->get();
-    
+
         $totalmonth = diffmonth(new \DateTime($from), new \DateTime($to_date));
 
         $data = array();
@@ -157,7 +157,7 @@ class IkmManager
             array_push($data, $rd);
           }
           // $o[] = numtomonth($a);
-    
+
           // $f[$a] = getIkmPd($u);?
               // return $rsp;
         }
@@ -169,7 +169,7 @@ class IkmManager
    function pekerjaan_arr(){
     foreach(['TNI','POLRI','PNS','SWASTA','WIRAUSAHA','Lainnya'] as $r):
         $arr[Str::lower(str_replace(' ','_',$r))] = 0;
-    endforeach;  
+    endforeach;
     return $arr;
 }
 function usia_arr($data){
@@ -182,8 +182,10 @@ function usia_arr($data){
     return $range;
 }
 
-   function ikm_kabupaten(){
-    $skpd = DB::table('skpd')->whereStatusSample(1)->get();
+   function ikm_kabupaten($tahun=false){
+    $skpd = $tahun ?   \App\Models\Skpd::withWhereHas('periodeAktif', function ($q) use ($tahun) {
+        $q->where('tahun', $tahun);
+    })->whereStatusSample(1)->get() : [];
     $l['jumlah'] = 0;
     $l['l'] = 0;
     $l['p'] = 0;
@@ -208,16 +210,16 @@ function usia_arr($data){
             $l['p']  += $cek['p'];
             foreach(['SMA','Non Pendidikan','SD','SMP','DIII','S1','S2','S3'] as $r):
                 $l[Str::lower(str_replace(' ','_',$r))] += $cek['pendidikan'][Str::lower(str_replace(' ','_',$r))] ?? 0;
-            endforeach; 
+            endforeach;
             foreach(['TNI','POLRI','PNS','SWASTA','WIRAUSAHA','Lainnya'] as $r):
                 $l['pekerjaan'][Str::lower(str_replace(' ','_',$r))] += $cek['pekerjaan'][Str::lower(str_replace(' ','_',$r))] ?? 0;
-            endforeach; 
-            
+            endforeach;
+
             foreach($cek['usia'] as $k=>$u){
                 $d['type'.($k+1)]  += $u['jumlah'];
               }
-            
-            $l['ikm'] += $cek['ikm'];          
+
+            $l['ikm'] += $cek['ikm'];
     }
     $l['usia'] = $this->usia_arr([1=>$d['type1'],$d['type2'],$d['type3'],$d['type4']]);
 
@@ -255,7 +257,7 @@ function usia_arr($data){
 //             $l['s2'] += $cek['s2'];
 //             $l['s3'] += $cek['s3'];
 //             $l['ikm'] += $cek['ikm'];
-//             $jly++;  
+//             $jly++;
 //         }
 //     }
 //     $l['ikm'] = $l['ikm'] / $jly;
@@ -263,7 +265,9 @@ function usia_arr($data){
 //    }
 
    function nilai_unsur_rekap(){
-    $skpd = DB::table('skpd')->whereStatusSample(1)->get();
+    $skpd = \App\Models\Skpd::withWhereHas('periodeAktif', function ($q)  {
+        $q->where('tahun', request()->year ?? date('Y'));
+    })->whereStatusSample(1)->get();
     $data['unsur'] = array();
     $data['data'] = array();
     foreach($skpd as $r){
@@ -288,15 +292,15 @@ function usia_arr($data){
 //     function ikm_layanan_skpd($id_skpd,$u=false){
 //         $list_layanan = Layanan::join('skpd','skpd.id_skpd','layanan.id_skpd')->where('layanan.id_skpd',$id_skpd)->get();
 //         $data = array();
-      
+
 //         foreach($list_layanan as $row){
 //         if($u):
 //         $total_ikm = $this->ikm_layanan($this->get_response_periode($row->id_layanan),true);
-    
+
 //         array_push($data,array_merge( $total_ikm,array('nama_skpd'=>$row->nama_skpd)));
 //         else:
 //         $total_ikm = $this->ikm_layanan($this->get_response_periode($row->id_layanan));
-        
+
 //         array_push($data,array_merge( $total_ikm,array('nama_layanan'=>$row->nama_layanan)));
 //     endif;
 
@@ -304,7 +308,7 @@ function usia_arr($data){
 //         return $data;
 //     }
 
-    
+
 function nilai_ikm_skpd($id_skpd){
     $unsur = array('u1','u2','u3','u4','u5','u6','u7','u8','u9');
     foreach($unsur as $r){
@@ -313,11 +317,11 @@ function nilai_ikm_skpd($id_skpd){
     $respon = $this->get_response_periode($id_skpd)->sortByDesc('id_respon');
     $sample = takesample(count($respon));
     $responden = $respon->take($sample);
-  
+
     if(count($respon) > 0):
 
     foreach($responden as $row){
-   
+
         foreach($unsur as $r){
             $u[$r] += $row->$r;
         }
@@ -359,13 +363,13 @@ function usiarangenull(){
 function pekerjaan($data){
     foreach(['TNI','POLRI','PNS','SWASTA','WIRAUSAHA','Lainnya'] as $r):
         $arr[Str::lower(str_replace(' ','_',$r))] = count($data->where('pekerjaan',$r));
-    endforeach;  
+    endforeach;
     return $arr;
 }
 function pendidikan($data){
     foreach(['SMA','Non Pendidikan','SD','SMP','DIII','S1','S2','S3'] as $r):
         $arr[Str::lower(str_replace(' ','_',$r))] = count($data->where('pendidikan',$r));
-        endforeach;  
+        endforeach;
         return $arr;
 }
 function responden($resp){

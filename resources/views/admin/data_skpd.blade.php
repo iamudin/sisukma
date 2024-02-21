@@ -8,7 +8,9 @@
 <div class="row">
 
 <div class="col-lg-4">
-@if($edit)<img class="w-100" src="{{toqr(url('survei/'.enc64($edit->id_skpd)))}}" >@endif
+@if($edit)
+<img class="w-100" src="{{toqr(url('survei/'.enc64($edit->id_skpd)))}}" >
+@endif
 </div>
 <div class="col-lg-8">
 <form class="" action="{{URL::full()}}" method="post">
@@ -28,6 +30,12 @@
     @endforeach
   </div>
   <div class="form-group">
+    <label for="">Tahun Sample</label><br>
+    @for($i=2022; $i<=date('Y'); $i++)
+    <input type="checkbox" name="tahun_sample[]" @if($edit && $edit->periodeAktif()->where('tahun',$i)->exists()) checked="checked" @endif value="{{$i}}" id=""> {{$i}} <br>
+    @endfor
+  </div>
+  <div class="form-group">
     <br>
     <button type="submit" class="btn float-end btn-primary btn-sm" name="simpan" value="true"> Simpan</button>
   </div>
@@ -40,7 +48,7 @@
 
 @else
 <div class="container-fluid px-4">
-    <h2 class="mt-4" style="width:100%">Data Perangkat Daerah  
+    <h2 class="mt-4" style="width:100%">Data Perangkat Daerah
     <div style="float:right"> <a href="{{url('admin/data-skpd?act=add')}}"  class="text-white btn btn-primary btn-sm">Tambah</a></div></h2>
 <br>
 <p style="font-size:30px;border-left:5px solid orange;padding-left:10px">Periode <b>{{$periode}}</b> <button onclick="$('.periode').modal('show')" class="btn btn-sm btn-danger float-end"> <i class="fa fa-edit"></i> Ganti Periode</button></p>
@@ -58,12 +66,12 @@
                 </thead>
 
                 <tbody>
-                  @php 
+                  @php
                  $ik = new \App\IkmManager;
                 @endphp
                   @foreach(DB::table('skpd')->get() as $k=>$row)
-                  @php 
-                  $ikm = $ik->nilai_ikm_skpd($row->id_skpd)['ikm']; 
+                  @php
+                  $ikm = $ik->nilai_ikm_skpd($row->id_skpd)['ikm'];
                   @endphp
                   <tr>
                     <td>{{$k+1}}</td>
@@ -72,7 +80,7 @@
                     <td>{{jlh_layanan($row->id_skpd)}}</td>
                     <td>{{$ikm ? round($ikm,2) : 0}}</td>
                     <td style="width:120px">
-                    
+
                       <a href="{{url('adminskpd/respon-layanan/'.$row->id_skpd.'?year='.($per ?($per['year'] ? $per['year'] :null) : date('Y')).'&bulan='.($per && isset($per['month']) ? ($per['month']? $per['month'] :null) :null).'&cetak=true')}}" class="btn btn-primary btn-sm"> <i class="fa fa-print" aria-hidden="true"></i> </a>
                       <a href="{{url('admin/data-skpd?act=edit&id='.enc64($row->id_skpd))}}" class="btn btn-warning btn-sm"> <i class="fas fa-edit    "></i></a>
                       <a href="{{url('admin/data-skpd?act=delete&id='.enc64($row->id_skpd))}}" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data ?')"><i class="fa fa-trash" aria-hidden="true"></i></a>

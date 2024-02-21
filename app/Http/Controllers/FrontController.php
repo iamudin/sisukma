@@ -15,7 +15,7 @@ class FrontController extends Controller
     public function __construct()
   {
     $this->middleware(function ($request, $next) {
-      
+
          return $next($request);
      });
 
@@ -23,6 +23,7 @@ class FrontController extends Controller
 function home(Request $req){
   // if(!session()->has('id_user'))
   // exit('Dalam Pengembangan');
+
   if(request()->print){
     $skpd = DB::table('skpd')->where('id_skpd',dec64($req->ids))->first();
     $ikm = json_decode(dec64($req->print));
@@ -31,7 +32,7 @@ function home(Request $req){
     // return view('skpd.cetak_ikm');
   }
   $data = new \App\IkmManager;
-  $ikm = $data->ikm_kabupaten();
+  $ikm = $data->ikm_kabupaten($req->year??date('Y'));
 return view('front.new',compact('ikm'));
 }
 function jadwal(){

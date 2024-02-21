@@ -5,7 +5,7 @@
       <div class="container " data-aos="fade-up">
         <div class="row">
           <div class="col-lg-12 text-center">
-     
+
           </div>
         </div>
         <div class="section-header">
@@ -19,10 +19,10 @@
           <div class="col-lg-12">
 
             <div class="service-item  position-relative ">
-              
+
               <h3>Kabupaten</h3>
               <div class="row">
-                <div class="col-lg-6"> 
+                <div class="col-lg-6">
               <h5>Nilai IKM</h5>
 
                 <p style="font-size:100px" class="mt-5 mb-5">{{round($ikm['ikm'],2)}}</p>
@@ -55,22 +55,26 @@
               </table>
                 </div>
               </div>
-             
-    
+
+
             </div>
           </div><!-- End Service Item -->
-@foreach(DB::table('skpd')->whereStatusSample(1)->get() as $r)
-@php $u = new \App\IkmManager;
+@foreach(\App\Models\Skpd::withWhereHas('periodeAktif', function ($q) {
+        $q->where('tahun', request()->year??date('Y'));
+    })->whereStatusSample(1)->get() as $r)
+
+@php
+$u = new \App\IkmManager;
 $id = $r->id_skpd;
 $ikm = $u->nilai_ikm_skpd($r->id_skpd);
 @endphp
           <div class="col-lg-6">
 
 <div class="service-item  position-relative ">
-  
+
   <h3>{{$r->nama_skpd}}</h3>
   <div class="row">
-    <div class="col-lg-4"> 
+    <div class="col-lg-4">
   <h5>Nilai IKM</h5>
     <p style="font-size:60px" class="mt-5 mb-5">{{round($ikm['ikm'],2)}}</p>
   <p class="text-center"><h5>Mutu Pelayanan </h5>
@@ -97,7 +101,7 @@ $ikm = $u->nilai_ikm_skpd($r->id_skpd);
       @foreach(['Non Pendidikan','SD','SMP','SMA','DIII','S1','S2','S3'] as $r)
       {{$r}} <span class="float-end "><b>{{$ikm['pendidikan'][Str::lower(str_replace(' ','_',$r))] ?? 0}}</b>  <span class="text-muted">Orang</span></span> <br>
       @endforeach
-      
+
     </td>
   </tr>
   </table>
@@ -110,7 +114,7 @@ $ikm = $u->nilai_ikm_skpd($r->id_skpd);
   </div>
     </div>
   </div>
- 
+
 
 </div>
 </div>

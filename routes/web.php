@@ -42,7 +42,7 @@ Route::get('cekhasil', function () {
 
         }
     }
-  
+
     });
 
     Route::get('cetakrekapskpd',function(){
@@ -61,7 +61,7 @@ Route::get('cekhasil', function () {
     // return $data;
         $pdf = PDF::loadView('rekap.tahunan',['data'=>$data]);
         return $pdf->stream('rekapitulasi-kabupaten-'.Str::slug($peri).'.pdf');
-        
+
         });
 //route untuk registrasi dan login customer
 Route::match(['get','post'],'login','App\Http\Controllers\AuthController@login');
@@ -86,12 +86,12 @@ Route::match(['get','post'],'gallery/{id?}','gallery');
 Route::controller(SkpdController::class)->group(function () {
     Route::match(['get','post'],'adminskpd','dashboard');
     Route::match(['get','post'],'adminskpd/dashboard','dashboard');
-    Route::match(['get','post'],'adminskpd/layanan','layanan');    
-    Route::match(['get','post'],'adminskpd/layanan/lihatrespon/{id?}','lihatrespon');    
-    Route::match(['get','post'],'adminskpd/layanan/lihatikm/{data?}','lihatikm');    
-    Route::match(['get','post'],'adminskpd/gallery','gallery');    
-    Route::match(['get','post'],'adminskpd/respon-layanan/{id}','respon_layanan');    
-    Route::match(['get','post'],'adminskpd/pengaturan','pengaturan');    
+    Route::match(['get','post'],'adminskpd/layanan','layanan');
+    Route::match(['get','post'],'adminskpd/layanan/lihatrespon/{id?}','lihatrespon');
+    Route::match(['get','post'],'adminskpd/layanan/lihatikm/{data?}','lihatikm');
+    Route::match(['get','post'],'adminskpd/gallery','gallery');
+    Route::match(['get','post'],'adminskpd/respon-layanan/{id}','respon_layanan');
+    Route::match(['get','post'],'adminskpd/pengaturan','pengaturan');
     });
 
 Route::controller(DashboardController::class)->group(function () {
@@ -122,3 +122,7 @@ Route::match(['get','post'],'admin/userskpd/create','create');
 Route::match(['get','post'],'admin/userskpd/update','update');
 Route::match(['get','post'],'admin/userskpd/delete/{id}','delete');
 });
+// Route::get('/', function () {
+//     echo phpinfo();
+// });
+
