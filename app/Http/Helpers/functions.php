@@ -83,7 +83,7 @@ function astrw($from,$to){
 }
 function getResponLayanan($respon){
   $respon = collect(json_decode(dec64($respon)));
-  return $respon->filter(function ($value)use($respon) { 
+  return $respon->filter(function ($value)use($respon) {
   if(request()->year){
     if(request()->month){
     return date('Y',strtotime($value->tgl_survei)) == request()->year && date('m',strtotime($value->tgl_survei)) == request()->month;
@@ -116,8 +116,8 @@ function get_client_ip() {
   return $ipaddress;
 }
 function getResponfilter($respon,$year,$month){
-  return $respon->filter(function ($value) use($year,$month) { 
-    
+  return $respon->filter(function ($value) use($year,$month) {
+
       return date('Y',strtotime($value->tgl_survei)) == $year && date('m',strtotime($value->tgl_survei)) == $month;
 
     });

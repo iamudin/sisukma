@@ -70,7 +70,6 @@ class IkmManager
         // return $rsp;
         }
         $q = collect($data);
-            // dd($q);
         View::share('periode',request()->year);
         View::share('urlcetak',url($path.'?year='.request()->year));
        if(request()->month){
@@ -315,8 +314,8 @@ function nilai_ikm_skpd($id_skpd){
         $u[$r] = 0;
     }
     $respon = $this->get_response_periode($id_skpd)->sortByDesc('id_respon');
-    $sample = takesample(count($respon));
-    $responden = $respon->take($sample);
+    $sample = count($respon);
+    $responden = $respon;
 
     if(count($respon) > 0):
 

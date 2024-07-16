@@ -8,7 +8,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SkpdController;
 use App\Http\Controllers\SendMail;
 use App\IkmManager;
+Route::get('/cekpass',function (){
+    return bcrypt('admiiin2024');
 
+});
 Route::get('printqr/{id?}',function($skpd=null){
     $skpd =  \App\Models\Skpd::where('id_skpd',$skpd)->first();
     if(empty($skpd)){

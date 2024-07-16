@@ -22,13 +22,7 @@ class FrontController extends Controller
 
   }
 function home(Request $req){
-  // if(!session()->has('id_user'))
-  // exit('Dalam Pengembangan');
-    // foreach(Skpd::get() as $r){
-    //     foreach(['2022','2023','2024'] as $rr){
-    //             Periode::updateOrCreate(['skpd_id' => $r->id_skpd, 'tahun' => $rr], ['tahun' => $rr]);
-    //     }
-    // }
+
   if(request()->print){
     $skpd = DB::table('skpd')->where('id_skpd',dec64($req->ids))->first();
     $ikm = json_decode(dec64($req->print));

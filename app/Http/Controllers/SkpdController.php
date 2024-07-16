@@ -29,7 +29,7 @@ class SkpdController extends Controller
        $this->menuside();
          return $next($request);
      });
-  
+
   }
 function pengaturan(Request $req){
   $data = DB::table('skpd')->whereIdSkpd(session('id_skpd'))->first();
@@ -45,7 +45,7 @@ function pengaturan(Request $req){
       'dibatasi' => $req->survei,
       'email' => $req->email
     ]);
- 
+
     return back()->with('success','Pengaturan berhasil disimpan');
   }
   return view('skpd.pengaturan',compact('data'));
@@ -71,7 +71,7 @@ return view('skpd.dashboard',compact('data','per'));
         if($req->simpan){
           $id = DB::table('gallery')->insertGetId(['nama'=>$req->nama,'permalink'=>Str::slug($req->nama),'id_skpd'=>session('id_skpd')]);
         return redirect('adminskpd/gallery/?act=edit&id='.base64_encode($id))->with('success','Berhasil Ditambah');
-  
+
         }
       }
 
@@ -92,7 +92,7 @@ return view('skpd.dashboard',compact('data','per'));
         if($req->simpan){
            DB::table('gallery')->where('id',$data->id)->update(['nama'=>$req->nama,'permalink'=>Str::slug($req->nama)]);
         return back()->with('success','Berhasil Diperbarui');
-  
+
         }
         if($req->upload){
           DB::table('img_gallery')->insert(['id_gallery'=>base64_decode(request('id')),'path'=>$this->upload_img($req->file('path')),'caption'=>$req->caption]);
@@ -105,7 +105,7 @@ return view('skpd.dashboard',compact('data','per'));
       }
     }else{
       $data = DB::table('gallery')->whereIdSkpd(session('id_skpd'))->get();
-      
+
     }
     return view('skpd.gallery',compact('data'));
   }
@@ -166,7 +166,7 @@ return view('skpd.dashboard',compact('data','per'));
 
           }
           }
-         
+
         }
       }
       $desc = $total + $gagal;
@@ -247,7 +247,7 @@ function lihatikm(Request $request){
   }
   return view('skpd.tableikmlayanan',['respon'=>$data]);
 }
-function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=null){ 
+function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=null){
   $l = Skpd::where('id_skpd',$id)->first();
   if(empty($l)){
     return redirect('adminskpd/layanan')->with('danger','Data tidak ditemukan');
@@ -277,19 +277,29 @@ function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=nu
       // $f[$a] = getIkmPd($u);?
           // return $rsp;
     }
-
     if(request('month')){
     $peri = blnindo(request('month')).' '.request('year');
-    $resp = $resp->whereMonth('tgl_survei',request('month'));
+    $respon = $resp->whereMonth('tgl_survei',request('month'))->orderBy('id_respon','desc')->get();
+    $totalmonth = 1;
+        $star = 1;
+        $to = 1;
+    $data = array();
+        for ($a = $star; $a <= $to; $a++){
+      $rsp = getResponfilter($respon->sortByDesc('id_respon'), request('year'), numtomonth($a));
+      $u = $rsp->take(takesample(count($rsp)));
+      foreach ($u as $rd) {
+        array_push($data, $rd);
+      }
   }
+}
     elseif(request('from') && request('to')){
     if(request('sms')){
       $peri = (Str::lower(request('sms')) == "i" ? "Januari s/d Juni" : "Juli s/d Desember " )." ".request('year');
     }
     else{
     $peri = "Triwulan ".$ikm->astrw(request('from'),request('to')).' '.request('year');
-  
-    } 
+
+    }
     $from = date('Y-m-d',strtotime(request()->year.'-'.request()->from.'-01'));
     $to_date = request()->year."-".request()->to."-23";
     $between = [$from,date("Y-m-t", strtotime($to_date))];
@@ -315,7 +325,7 @@ function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=nu
     if(request('cetak')){
       $pdf = PDF::loadview('rekap.semester',['resp'=>$data,'skpd'=>$l,'periode'=>$peri]);
       return $pdf->download(Str::slug('rekapitulasi '.$l->nama_skpd.' periode '.$peri).'.pdf');
-  
+
     }
     }
     else{
@@ -324,10 +334,10 @@ function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=nu
     if(request('cetak')){
         $pdf = PDF::loadview('rekap.semester',['resp'=>$data,'skpd'=>$l,'periode'=>$peri]);
         return $pdf->download(Str::slug('rekapitulasi '.$l->nama_skpd.' periode '.$peri).'.pdf');
-    
+
       }
   }
-  
+
   // if(request('cetak')){
   //   $pdf = PDF::loadview('skpd.pdfhasil',['resp'=>$resp->get(),'skpd'=>$l,'periode'=>$peri]);
   //   return $pdf->download(Str::slug('rekapitulasi '.$l->nama_skpd.' periode '.$peri).'.pdf');
