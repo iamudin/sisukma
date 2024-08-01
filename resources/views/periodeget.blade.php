@@ -8,14 +8,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-    
+
       <div class="row">
         <div class="col-12">
           <div class="form-group">
             <small>Tahun</small>
             <select name="year" class="form-control" id="" onchange="if(this.value){$('#peri').show()}else{$('#peri').hide()}">
               <option value="">-pilih-</option>
-              @for($i=2022; $i<=2023; $i++)
+              @for($i=2022; $i<=2024; $i++)
               <option value="{{$i}}">{{$i}}</option>
               @endfor
             </select>
