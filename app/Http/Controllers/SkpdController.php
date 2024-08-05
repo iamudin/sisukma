@@ -284,11 +284,10 @@ function respon_layanan(\App\IkmManager $ikm,Request $request,Respon $res,$id=nu
         $star = 1;
         $to = 1;
     $data = array();
-      $u = $rsp->take(takesample(count($respon)));
+      $u = $respon->take(takesample(count($respon)));
       foreach ($u as $rd) {
         array_push($data, $rd);
       }
-
 }
     elseif(request('from') && request('to')){
     if(request('sms')){
