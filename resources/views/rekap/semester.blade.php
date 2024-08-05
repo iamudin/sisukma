@@ -137,8 +137,9 @@ endforeach;
 </table>
 <!-- <tr>
       <td colspan="11" align="right">prediket(((($u1 / $respon)*1/9)+(($u9 / $respon)*1/9)+(($u2 / $respon)*1/9)+(($u3 / $respon)*1/9)+(($u4 / $respon)*1/9)+(($u5 / $respon)*1/9)+(($u6 / $respon)*1/9)+(($u7 / $respon)*1/9)+(($u8 / $respon)*1/9))*25)</td>
-     
+
     </tr> -->
+    @if (count($resp) > 0)
 <table style="border-collapse:collapse;width:100%;border:none;margin-top:10px;font-size:10px" border="0">
     <tr style="border:none">
         <td style="border:none" rowspan="12">
@@ -155,7 +156,7 @@ endforeach;
             <h5 style="border:2px solid #000;padding:10px;margin-right:50px">IKM UNIT PELAYANAN <span
                     style="float:right">{{$ikm > 0 ? round($ikm,2) : 0}}</span></h5>
 
-     
+
         <td>
     </tr>
     <tr>
@@ -176,6 +177,7 @@ endforeach;
         </tr>
     @endfor
 </table>
+@endif
 @if($respon > 0)
 <div style="font-size:10px">
 Mutu Pelayanan:<br>
